@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/height_cardview"
+    xmlns:cardview="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/mcvPictureCard"
+    android:layout_marginBottom="@dimen/activity_vertical_margin"
+    cardview:cardCornerRadius="@dimen/corner_radius_cardview">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/ivPictureCard"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/height_cardview"
+            android:background="@drawable/image"
+            android:scaleType="centerCrop"
+            android:transitionName="@string/transitionname_picture"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="bottom"
+            android:paddingStart="@dimen/activity_vertical_margin"
+            android:paddingBottom="@dimen/activity_vertical_margin"
+            android:background="@color/backgroundtext_card">
+
+            <TextView
+                android:id="@+id/tvUsernameCard"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/username_card"
+                android:textColor="@color/editTextColorWhite"
+                android:textSize="@dimen/textsize_username_card"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/tvFirstWord"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/firstword_card"
+                    android:textColor="@color/editTextColorWhite"
+                    android:textSize="@dimen/firstword_textsize_card"/>
+
+                <TextView
+                    android:id="@+id/tvTimeCard"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/timecard_card"
+                    android:textColor="@color/editTextColorWhite"
+                    android:textSize="@dimen/firstword_textsize_card"
+                    android:layout_marginStart="@dimen/timecard_marginleft_card"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="@dimen/like_margintop_card">
+
+                <com.google.android.material.checkbox.MaterialCheckBox
+                    android:id="@+id/mcbLikeCheckCard"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:buttonTint="@color/editTextColorWhite"
+                    android:button="@drawable/checkbox_selector"/>
+
+                <TextView
+                    android:id="@+id/tvLikeNumberCard"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/likenumbercard_card"
+                    android:textColor="@color/editTextColorWhite"
+                    android:textSize="@dimen/firstword_textsize_card"
+                    android:layout_marginStart="@dimen/timecard_marginleft_card"/>
+
+            </LinearLayout>
+
+        </LinearLayout>
+    </FrameLayout>
+
+</com.google.android.material.card.MaterialCardView>
