@@ -3,6 +3,10 @@
     package="com.dgdevelop.platzigram">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+
+    <uses-feature android:name="android.hardware.camera" android:required="true" />
 
     <application
         android:allowBackup="true"
@@ -11,6 +15,19 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
+        <provider
+            android:authorities="com.dgdevelop.platzigram.fileprovider"
+            android:name="androidx.core.content.FileProvider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_path"/>
+
+        </provider>
+        <activity android:name=".post.view.NewPostActivity"/>
         <activity
             android:name=".view.PictureDetailActivity"
             android:parentActivityName=".view.ContainerActivity">
@@ -18,14 +35,11 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".view.ContainerActivity" />
         </activity>
-
         <activity android:name=".view.ContainerActivity" />
         <activity
             android:name=".ReferenciaActivity"
             android:label="@string/title_activity_referencia"
-            android:theme="@style/AppTheme.NoActionBar" />
-
-        <!-- Definiendo jerarquias -->
+            android:theme="@style/AppTheme.NoActionBar" /> <!-- Definiendo jerarquias -->
         <activity
             android:name=".view.CreateAccountActivity"
             android:parentActivityName=".login.view.LoginActivity">

@@ -5,7 +5,7 @@ import com.dgdevelop.platzigram.login.presenter.LoginPresenter
 class LoginRepositoryImpl(private val presenter: LoginPresenter): LoginRepository {
 
     override fun signIn(username: String, password: String) {
-        val success = false
+        val success = true
         if(success){
             presenter.loginSuccess()
         }else{
