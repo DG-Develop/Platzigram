@@ -10,17 +10,45 @@ import com.dgdevelop.platzigram.R
 import com.dgdevelop.platzigram.login.presenter.LoginPresenter
 import com.dgdevelop.platzigram.login.presenter.LoginPresenterImpl
 import com.dgdevelop.platzigram.view.ContainerActivity
-import com.dgdevelop.platzigram.view.CreateAccountActivity
+import com.facebook.AccessToken
+import com.facebook.CallbackManager
+import com.facebook.FacebookCallback
+import com.facebook.FacebookException
+import com.facebook.login.LoginResult
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.auth.FacebookAuthProvider
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_login.*
+import java.util.*
 
 class LoginActivity : AppCompatActivity(), LoginView {
 
     private lateinit var presenter: LoginPresenter
 
+    companion object{
+        private const val TAG = "Login"
+    }
+
+    private lateinit var firebaseAuth: FirebaseAuth
+    private lateinit var authStateListener: FirebaseAuth.AuthStateListener
+    private lateinit var  callbackManager: CallbackManager
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+
+        callbackManager = CallbackManager.Factory.create()
+
+        firebaseAuth = FirebaseAuth.getInstance()
+        authStateListener = FirebaseAuth.AuthStateListener {
+            val firebaseUser = firebaseAuth.currentUser
+            if(firebaseUser != null){
+                Log.w(TAG, "Usuario logeado " + firebaseUser.email)
+                goPrincipalHome()
+            }else{
+                Log.w(TAG, "Usuario logeado")
+            }
+        }
 
         presenter = LoginPresenterImpl(this)
 
@@ -33,13 +61,56 @@ class LoginActivity : AppCompatActivity(), LoginView {
                 Log.i("Login", "No dejes campos vacios")
                 return@setOnClickListener
             }
-            presenter.signIn(tietUsername.text.toString(), tietPassword.text.toString())
+            sigIn(tietUsername.text.toString(), tietPassword.text.toString())
+
         }
+
+        // Facebook
+        login_facebook.setPermissions(listOf("email", "public_profile"))
+        login_facebook.registerCallback(callbackManager, object : FacebookCallback<LoginResult> {
+            override fun onSuccess(result: LoginResult?) {
+                Log.w(TAG, "Facebook Login Success Token: ${result?.accessToken?.token}")
+                firebaseAuthWithFacebook(result!!.accessToken)
+            }
+
+            override fun onCancel() {
+                Log.w(TAG, "Facebook Cancel")
+            }
+
+            override fun onError(error: FacebookException?) {
+                Log.w(TAG, "Facebook Error: ${error?.message}")
+            }
+        })
+
 
         ivLogo.setOnClickListener {
             goToHomePage()
         }
 
+        btn_create_here.setOnClickListener {
+            goCreateAccount()
+        }
+
+    }
+
+    private fun firebaseAuthWithFacebook(accessToken: AccessToken) {
+        val credential = FacebookAuthProvider.getCredential(accessToken.token)
+        firebaseAuth.signInWithCredential(credential)
+            .addOnCompleteListener {task ->
+                if(task.isSuccessful){
+                    Log.d(TAG, "signInWithCredential:success")
+                    Snackbar.make(login_facebook, "Facebook Authentication Success", Snackbar.LENGTH_SHORT).show()
+                    goPrincipalHome()
+                    finish()
+                }else{
+                    Log.w(TAG, "signInWithCredential:failure", task.exception)
+                    Snackbar.make(login_facebook, "Facebook Authentication Failed", Snackbar.LENGTH_SHORT).show()
+                }
+            }
+    }
+
+    private fun sigIn(email: String, password: String) {
+        presenter.signIn(email, password, this, firebaseAuth)
     }
 
     override fun enableInputs() {
@@ -78,6 +149,21 @@ class LoginActivity : AppCompatActivity(), LoginView {
 
     override fun goPrincipalHome(){
         startActivity(Intent(this, ContainerActivity::class.java))
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        callbackManager.onActivityResult(requestCode, resultCode, data) // Facebook
+    }
+
+    override fun onStart() {
+        super.onStart()
+        firebaseAuth.addAuthStateListener(authStateListener)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        firebaseAuth.removeAuthStateListener(authStateListener)
     }
 
 }
